@@ -1,0 +1,17 @@
+
+Each dump file: id xu yu zu vx vy vz  
+ - id = atom ID 
+ - xu,yu,zu = unwrapped atom coordinates
+ - vx,vy,vz = atom velocities
+ - total 553M (553 megabytes)
+It's a moderately large file (additional space is required). If you have enough storage to download each dump file (To avoid running the parallel simulation again), please contact k.gonzalesflores@fisica.ugto.mx.
+
+Each velocity-angular.data contains: 
+# wx wy wz w Lxx Lyy Lzz
+or 
+#additional seed to improve statitics of msdra curve (more points for the linear fit)
+
+Each msd-rotational.data contains:
+# t MSDRA
+
+ 
