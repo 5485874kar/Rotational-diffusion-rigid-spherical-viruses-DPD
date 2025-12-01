@@ -1,0 +1,71 @@
+#General code for LAMMPS
+variable	BoxSideLength		equal   v_BoxSideLength
+variable	WiggleAmplitudeStrain	equal   v_AmplitudeStrain 
+variable	WigglePeriod		equal	  v_period
+variable	WiggleAmplitude	      equal	  v_BoxSideLength*v_WiggleAmplitudeStrain
+variable    WiggleMore              equal   v_WiggleAmplitude
+
+variable    relaxationTimeSteps     equal   1000
+variable	ShearTimeSteps		equal   10000000 
+
+#system3-Pe-number.data, positions of the particles
+include               "systemm.in.init" 
+read_data             "system3-Pe-number-Ns.data"
+include               "systemm.in.settings"
+ group WATER type 1 
+ group SPCEE type 2 3 4 5 
+ group UPPER type 6 
+ group LOWER type 7
+
+velocity       	WATER create 1.00  12345 mom yes rot yes dist gaussian
+velocity       	SPCEE create 1.00  12345 mom yes rot yes dist gaussian
+velocity          UPPER  set  0.0 0.0 0.0 
+velocity          LOWER set  0.0 0.0 0.0  
+comm_modify       mode single cutoff 3.5 vel yes
+neighbor       	2.0 bin
+neigh_modify   	delay 2 
+timestep          0.03
+fix 		           1 all nve
+fix                    2 SPCEE rigid molecule
+fix                    3 UPPER setforce 0.0 0.0 0.0
+fix                    4 LOWER setforce 0.0 0.0 0.0
+
+compute myTemp WATER temp/com
+variable t equal c_myTemp
+
+thermo_style   	custom etotal ke pe ebond enthalpy temp press v_t
+thermo_modify  	line multi
+thermo            1000000	
+thermo_modify  	flush yes
+
+run            	${relaxationTimeSteps}
+
+fix               7 UPPER move wiggle  ${WiggleMore} 0.0 0.0  ${WigglePeriod} units box
+fix               8 LOWER move wiggle -${WiggleMore} 0.0 0.0  ${WigglePeriod} units box
+
+#dump 1 all atom 200 dump.lammpstrj
+
+dump 2 SPCEE custom 1000 dump.prueba-30-Pe-number-Ns id  xu yu zu vx vy vz
+dump_modify 2 sort id
+
+run		    ${ShearTimeSteps}
+write_data  system_after_nvt.data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
