@@ -1,0 +1,9 @@
+
+Each file: 
+#  xu yu zu vx vy vz  
+ - id = atom ID 
+ - x y z atom coordinates
+ - vx,vy,vz = atom velocities
+ 
+
+
